@@ -40,55 +40,55 @@ function initialOrientation() {
 initialOrientation();
 //ADD LANDSCAPE CLASS TO LAYOUT ELEMENTS
 function landscapeSwitch() {
-  siteOrientation = "landscape";
-  updateColors(projectList);
-  logoContainer.classList.add("logo-container-ls");
-  backgroundColorBar.classList.add("background-colorbar-ls");
-  galleryContainer.classList.add("gallery-container-ls");
   primaryImg.classList.add("primary-img-ls");
-  if (leftImage) {
-    leftImage.classList.add("left-image-ls");
-  }
-  if (rightImage) {
-    rightImage.classList.add("right-image-ls");
-  }
   if (leftHideImage) {
     leftHideImage.classList.add("left-hidden-image-ls");
   }
   if (rightHideImage) {
     rightHideImage.classList.add("right-hidden-image-ls");
   }
+  if (leftImage) {
+    leftImage.classList.add("left-image-ls");
+  }
+  if (rightImage) {
+    rightImage.classList.add("right-image-ls");
+  }
+  updateColors(projectList);
+  logoContainer.classList.add("logo-container-ls");
+  backgroundColorBar.classList.add("background-colorbar-ls");
+  galleryContainer.classList.add("gallery-container-ls");
   infoContainer.classList.add("info-container-ls");
   projectInfo.classList.add("project-info-ls");
   mobileMenu.classList.remove("mobile-menu");
   mobileMenu.classList.add("mobile-menu-ls");
   pageContainer.classList.add("page-container-ls");
+  siteOrientation = "landscape";
 }
 //REMOVE LANDSCAPE CLASS FROM LAYOUT ELEMENTS
 function portraitSwitch() {
-  siteOrientation = "portrait";
-  updateColors(projectList);
-  logoContainer.classList.remove("logo-container-ls");
-  backgroundColorBar.classList.remove("background-colorbar-ls");
-  galleryContainer.classList.remove("gallery-container-ls");
   primaryImg.classList.remove("primary-img-ls");
-  if (leftImage) {
-    leftImage.classList.remove("left-image-ls");
-  }
-  if (rightImage) {
-    rightImage.classList.remove("right-image-ls");
-  }
   if (leftHideImage) {
     leftHideImage.classList.remove("left-hidden-image-ls");
   }
   if (rightHideImage) {
     rightHideImage.classList.remove("right-hidden-image-ls");
   }
+  if (leftImage) {
+    leftImage.classList.remove("left-image-ls");
+  }
+  if (rightImage) {
+    rightImage.classList.remove("right-image-ls");
+  }
+  updateColors(projectList);
+  logoContainer.classList.remove("logo-container-ls");
+  backgroundColorBar.classList.remove("background-colorbar-ls");
+  galleryContainer.classList.remove("gallery-container-ls");
   infoContainer.classList.remove("info-container-ls");
   projectInfo.classList.remove("project-info-ls");
   mobileMenu.classList.add("mobile-menu");
   mobileMenu.classList.remove("mobile-menu-ls");
   pageContainer.classList.remove("page-container-ls");
+  siteOrientation = "portrait";
 }
 
 // RESPONSIVE DESIGN LISTENERS
@@ -136,6 +136,16 @@ window.addEventListener("orientationchange", () => {
   }
 });
 
+function toggleImageTransition(time) {
+  if (leftImage) {
+    leftImage.style.transition = time;
+  }
+  if (rightImage) {
+    rightImage.style.transtion = time;
+  }
+  primaryImg.style.transition = time;
+}
+
 function listenEvent(event) {
   if (leftImage) {
     leftImage.style.transition = ".1s";
@@ -147,6 +157,7 @@ function listenEvent(event) {
   let yPos = event.wheelDeltaY;
   //   console.log(yPos);
   if (yPos > 130 && listeningToWheel && activeProjectIndex > 0) {
+    toggleImageTransition(".1s");
     listeningToWheel = false;
     activeProjectIndex--;
     updateImages(projectList);
@@ -157,12 +168,16 @@ function listenEvent(event) {
       clearInterval(interval);
     }
     updateColors(projectList);
-    setTimeout(() => (listeningToWheel = true), 500);
+    setTimeout(() => {
+      toggleImageTransition("0s");
+      listeningToWheel = true;
+    }, 500);
   } else if (
     yPos < -130 &&
     listeningToWheel &&
     activeProjectIndex < projectList.length - 1
   ) {
+    toggleImageTransition(".1s");
     listeningToWheel = false;
     activeProjectIndex++;
     updateImages(projectList);
@@ -173,7 +188,10 @@ function listenEvent(event) {
       clearInterval(interval);
     }
     updateColors(projectList);
-    setTimeout(() => (listeningToWheel = true), 500);
+    setTimeout(() => {
+      toggleImageTransition("0s");
+      listeningToWheel = true;
+    }, 500);
   }
 }
 function handleTouchStart(event) {
@@ -196,6 +214,7 @@ function listenEventMobile(event) {
     primaryImg.style.transition = ".1s";
     //   console.log(yPos);
     if (yPos > 0 && listeningToWheel && activeProjectIndex > 0) {
+      toggleImageTransition(".1s");
       listeningToWheel = false;
       activeProjectIndex--;
       updateImages(projectList);
@@ -206,12 +225,16 @@ function listenEventMobile(event) {
         clearInterval(interval);
       }
       updateColors(projectList);
-      setTimeout(() => (listeningToWheel = true), 500);
+      setTimeout(() => {
+        toggleImageTransition("0s");
+        listeningToWheel = true;
+      }, 500);
     } else if (
       yPos < 0 &&
       listeningToWheel &&
       activeProjectIndex < projectList.length - 1
     ) {
+      toggleImageTransition(".1s");
       listeningToWheel = false;
       activeProjectIndex++;
       updateImages(projectList);
@@ -222,7 +245,10 @@ function listenEventMobile(event) {
         clearInterval(interval);
       }
       updateColors(projectList);
-      setTimeout(() => (listeningToWheel = true), 500);
+      setTimeout(() => {
+        toggleImageTransition("0s");
+        listeningToWheel = true;
+      }, 500);
     }
 
     initialY = currentY; // Update for next touchmove
