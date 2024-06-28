@@ -288,6 +288,12 @@ body {
   transform: translateY(-50%);
   visibility: hidden;
 }
+.gallery-hide-ls {
+  position: absolute;
+  top: -400px;
+  left: 50%;
+  visibility: hidden;
+}
 /*GALLERY END*/
 
 /*PROJECT INFORMATION*/

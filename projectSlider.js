@@ -10,7 +10,11 @@ let leftHideImage,
 function loadImages(array) {
   //ADD DOM IMAGES FOR EACH PROJECT IN THE PROJECTLIST ARRAY
   for (let i = 0; i < array.length; i++) {
-    galleryContainer.innerHTML += `<div class="gallery-img secondary-img gallery-hide"><div class="tint" id="${array[i].id}"></div><img src="${array[i].image}"/></div>`;
+    if (siteOrientation === "landscape") {
+      galleryContainer.innerHTML += `<div class="gallery-img secondary-img gallery-hide-ls"><div class="tint" id="${array[i].id}"></div><img src="${array[i].image}"/></div>`;
+    } else {
+      galleryContainer.innerHTML += `<div class="gallery-img secondary-img gallery-hide"><div class="tint" id="${array[i].id}"></div><img src="${array[i].image}"/></div>`;
+    }
   }
   //CAPTURE DOM IMAGES INTO AN ARRAY
   imageArray = Array.from(document.querySelectorAll(".gallery-img"));
@@ -22,9 +26,15 @@ function updateImages(array) {
 
   //ASSIGN LEFT AND RIGHT IMAGE VARIABLES TO DOM ELEMENTS
   let lImage, rImage, leftHiddenImage, rightHiddenImage;
-  imageArray.forEach(
-    (el) => (el.classList = "gallery-img secondary-img gallery-hide")
-  );
+  if (siteOrientation === "landscape") {
+    imageArray.forEach(
+      (el) => (el.classList = "gallery-img secondary-img gallery-hide-ls")
+    );
+  } else {
+    imageArray.forEach(
+      (el) => (el.classList = "gallery-img secondary-img gallery-hide")
+    );
+  }
   lImage = imageArray[activeProjectIndex - 1];
   rImage = imageArray[activeProjectIndex + 1];
   leftHiddenImage = imageArray[activeProjectIndex - 2];
