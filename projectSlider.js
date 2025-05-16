@@ -8,6 +8,7 @@ let leftHideImage,
   imageArray;
 
 function loadImages(array) {
+  galleryContainer.innerHTML = "";
   //ADD DOM IMAGES FOR EACH PROJECT IN THE PROJECTLIST ARRAY
   for (let i = 0; i < array.length; i++) {
     if (siteOrientation === "landscape") {
@@ -20,12 +21,7 @@ function loadImages(array) {
   imageArray = Array.from(document.querySelectorAll(".gallery-img"));
 }
 
-function updateImages(array) {
-  //ASSIGN PRIMARY IMAGE VARIABLE TO DOM ELEMENT
-  primaryImg = imageArray[activeProjectIndex];
-
-  //ASSIGN LEFT AND RIGHT IMAGE VARIABLES TO DOM ELEMENTS
-  let lImage, rImage, leftHiddenImage, rightHiddenImage;
+function resetGalleryClasses() {
   if (siteOrientation === "landscape") {
     imageArray.forEach(
       (el) => (el.classList = "gallery-img secondary-img gallery-hide-ls")
@@ -35,20 +31,55 @@ function updateImages(array) {
       (el) => (el.classList = "gallery-img secondary-img gallery-hide")
     );
   }
+}
+
+function updateImages(array) {
+  resetGalleryClasses();
+  //ASSIGN PRIMARY IMAGE VARIABLE TO DOM ELEMENT
+  primaryImg = imageArray[activeProjectIndex];
+
+  //ASSIGN LEFT AND RIGHT IMAGE VARIABLES TO DOM ELEMENTS
+  let lImage, rImage, leftHiddenImage, rightHiddenImage;
   lImage = imageArray[activeProjectIndex - 1];
   rImage = imageArray[activeProjectIndex + 1];
   leftHiddenImage = imageArray[activeProjectIndex - 2];
   rightHiddenImage = imageArray[activeProjectIndex + 2];
+  if (lImage) {
+    leftImage = lImage;
+  } else {
+    leftImage = undefined;
+  }
+  if (rImage) {
+    rightImage = rImage;
+  } else {
+    rightImage = undefined;
+  }
+  if (leftHiddenImage) {
+    leftHideImage = leftHiddenImage;
+  } else {
+    leftHideImage = undefined;
+  }
+  if (rightHiddenImage) {
+    rightHideImage = rightHiddenImage;
+  } else {
+    rightHideImage = undefined;
+  }
 
   //DEFINE CLASSES ON RIGHT AND LEFT IMAGES DEPENDING ON ORIENTATION
   if (siteOrientation === "landscape") {
+    //ADD PRIMARY CLASS TO PRIMARY IMAGE
+    primaryImg.classList =
+      "gallery-img secondary-img primary-img primary-img-ls";
+    primaryImg.firstChild.style.backgroundColor = "";
+    primaryImg.addEventListener("click", gotoProject);
+
     if (leftHiddenImage) {
       leftHiddenImage.classList =
-        "gallery-img secondary-img left-hidden-image left-hidden-image-ls";
+        "gallery-img secondary-img left-hidden-image-ls";
     }
     if (rightHiddenImage) {
       rightHiddenImage.classList =
-        "gallery-img secondary-img right-hidden-image right-hidden-image-ls";
+        "gallery-img secondary-img right-hidden-image-ls";
     }
 
     if (lImage) {
@@ -65,20 +96,12 @@ function updateImages(array) {
       rImage.firstChild.style.mixBlendMode = "color";
       rImage.removeEventListener("click", gotoProject);
     }
+  } else {
     //ADD PRIMARY CLASS TO PRIMARY IMAGE
-    primaryImg.classList = "";
-    primaryImg.classList =
-      "gallery-img secondary-img primary-img primary-img-ls";
+    primaryImg.classList = "gallery-img secondary-img primary-img";
     primaryImg.firstChild.style.backgroundColor = "";
     primaryImg.addEventListener("click", gotoProject);
-  } else {
-    if (leftHiddenImage) {
-      leftHiddenImage.classList = "gallery-img secondary-img left-hidden-image";
-    }
-    if (rightHiddenImage) {
-      rightHiddenImage.classList =
-        "gallery-img secondary-img right-hidden-image";
-    }
+
     if (lImage) {
       lImage.classList = "gallery-img secondary-img left-image";
       lImage.firstChild.style.backgroundColor =
@@ -93,22 +116,19 @@ function updateImages(array) {
       rImage.firstChild.style.mixBlendMode = "color";
       rImage.removeEventListener("click", gotoProject);
     }
-    //ADD PRIMARY CLASS TO PRIMARY IMAGE
-    primaryImg.classList = "";
-    primaryImg.classList = "gallery-img secondary-img primary-img";
-    primaryImg.firstChild.style.backgroundColor = "";
-    primaryImg.addEventListener("click", gotoProject);
+    if (leftHiddenImage) {
+      leftHiddenImage.classList = "gallery-img secondary-img left-hidden-image";
+    }
+    if (rightHiddenImage) {
+      rightHiddenImage.classList =
+        "gallery-img secondary-img right-hidden-image";
+    }
   }
-
-  leftImage = lImage;
-  rightImage = rImage;
-  leftHideImage = leftHiddenImage;
-  rightHideImage = rightHiddenImage;
-
-  //   console.log(leftHiddenImage, rightHiddenImage, lImage, rImage, primaryImg);
+  // console.log(leftHideImage, leftImage, primaryImg, rightImage, rightHideImage);
 }
 
 function populateDescription(array) {
+  projectTitle.style.fontFamily = array[activeProjectIndex].font;
   projectTitle.innerText = array[activeProjectIndex].title;
   projectDate.innerText = array[activeProjectIndex].date;
   projectInfo.innerHTML = array[activeProjectIndex].paragraph;
@@ -130,7 +150,7 @@ function updateColors(array) {
   projectDate.style.color = array[activeProjectIndex].infoColor;
   projectInfo.style.color = array[activeProjectIndex].infoColor;
   backgroundColorBar.style.backgroundColor =
-    array[activeProjectIndex].titleColor;
+    array[activeProjectIndex].bgBlockColor;
 }
 //DEFINE HTML OF PAGE
 function populatePage(array) {
@@ -141,10 +161,11 @@ function populatePage(array) {
 }
 
 function gotoProject(event) {
+  console.log(event.target.id);
   window.removeEventListener("touchstart", handleTouchStart);
   window.removeEventListener("touchmove", listenEventMobile);
   startingScreen.style.backgroundColor =
-    projectList[activeProjectIndex].bgBlockColor;
+    activeList[activeProjectIndex].bgBlockColor;
   startingScreen.classList.remove("hidden-screen");
   startingScreen.classList.add("visible-screen");
   startingScreen.classList.remove("screen-animation");
@@ -153,6 +174,9 @@ function gotoProject(event) {
   }, 750);
   window.addEventListener("touchstart", handleTouchStart);
   window.addEventListener("touchmove", listenEventMobile);
+  activeProjectIndex = 0;
+  activeList = productListLeisure;
+  populatePage(productListLeisure);
 }
 
 populatePage(projectList);

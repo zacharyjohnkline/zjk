@@ -1,4 +1,7 @@
 "use strict";
+//DEFINE LIST TO PULL FROM
+let activeList = projectList;
+
 //DEFINE ACTIVE PROJECT INDEX
 let activeProjectIndex = 0;
 let ticker = 0;
@@ -12,11 +15,13 @@ let listeningToWheel = true;
 //CAPTURE DOM ELEMENTS
 const startingScreen = document.querySelector(".starting-screen");
 
+//FUNCTION TO START PROFESSIONAL INTERVAL
 function startInterval() {
   profession = document.getElementById("profession");
   professionPhrase = document.getElementById("profession-phrase");
-  profession.style.color = `black`;
+  profession.style.color = `teal`;
   profession.style.fontSize = `calc(20px + 5 * ((100vw - 320px) / 680))`;
+  profession.style.fontFamily = `Quicksand-Bold`;
   interval = setInterval(() => {
     ticker++;
     if (ticker >= professionArticles.length) {
@@ -35,24 +40,14 @@ function initialOrientation() {
   } else {
     siteOrientation = "portrait";
   }
-  console.log("initial orientation", siteOrientation);
+  // console.log("initial orientation", siteOrientation);
 }
+//INITIALIZE PAGE READING TO DISCERN ORIENTATION
 initialOrientation();
+
 //ADD LANDSCAPE CLASS TO LAYOUT ELEMENTS
 function landscapeSwitch() {
-  primaryImg.classList.add("primary-img-ls");
-  if (leftHideImage) {
-    leftHideImage.classList.add("left-hidden-image-ls");
-  }
-  if (rightHideImage) {
-    rightHideImage.classList.add("right-hidden-image-ls");
-  }
-  if (leftImage) {
-    leftImage.classList.add("left-image-ls");
-  }
-  if (rightImage) {
-    rightImage.classList.add("right-image-ls");
-  }
+  updateImages(projectList);
   updateColors(projectList);
   logoContainer.classList.add("logo-container-ls");
   backgroundColorBar.classList.add("background-colorbar-ls");
@@ -66,19 +61,7 @@ function landscapeSwitch() {
 }
 //REMOVE LANDSCAPE CLASS FROM LAYOUT ELEMENTS
 function portraitSwitch() {
-  primaryImg.classList.remove("primary-img-ls");
-  if (leftHideImage) {
-    leftHideImage.classList.remove("left-hidden-image-ls");
-  }
-  if (rightHideImage) {
-    rightHideImage.classList.remove("right-hidden-image-ls");
-  }
-  if (leftImage) {
-    leftImage.classList.remove("left-image-ls");
-  }
-  if (rightImage) {
-    rightImage.classList.remove("right-image-ls");
-  }
+  updateImages(projectList);
   updateColors(projectList);
   logoContainer.classList.remove("logo-container-ls");
   backgroundColorBar.classList.remove("background-colorbar-ls");
@@ -108,20 +91,23 @@ window.addEventListener("load", () => {
 
 //RE-EVALUTE ORIENTATION ON WINDOW RESIZE
 window.addEventListener("resize", () => {
-  if (leftImage) {
-    leftImage.style.transition = "";
-  }
-  if (rightImage) {
-    rightImage.style.transition = "";
-  }
-  primaryImg.style.transition = ".1s";
+  imageArray.forEach((el) => {
+    el.style.transition = "0s";
+  });
   let width = window.innerWidth;
   let height = window.innerHeight;
   if (width >= height * 1.25) {
+    // initGallery("landscape");
     landscapeSwitch();
   } else {
+    // initGallery("portrait");
     portraitSwitch();
   }
+  setTimeout(() => {
+    imageArray.forEach((el) => {
+      el.style.transition = ".1s";
+    });
+  }, 250);
 });
 
 //SWITCH LAYOUT BASED ON MOBILE SCREEN ORIENTATION
@@ -129,10 +115,10 @@ window.addEventListener("orientationchange", () => {
   const orientation = screen.orientation;
   if (orientation.type === "landscape-primary") {
     landscapeSwitch();
-    console.log(siteOrientation);
+    // console.log(siteOrientation);
   } else if (orientation.type === "portrait-primary") {
     portraitSwitch();
-    console.log(siteOrientation);
+    // console.log(siteOrientation);
   }
 });
 
@@ -147,27 +133,20 @@ function toggleImageTransition(time) {
 }
 
 function listenEvent(event) {
-  if (leftImage) {
-    leftImage.style.transition = ".1s";
-  }
-  if (rightImage) {
-    rightImage.style.transition = ".1s";
-  }
-  primaryImg.style.transition = ".1s";
   let yPos = event.wheelDeltaY;
   //   console.log(yPos);
   if (yPos > 130 && listeningToWheel && activeProjectIndex > 0) {
-    toggleImageTransition(".1s");
     listeningToWheel = false;
+    toggleImageTransition(".1s");
     activeProjectIndex--;
-    updateImages(projectList);
-    populateDescription(projectList);
-    if (activeProjectIndex === 0) {
+    updateImages(activeList);
+    populateDescription(activeList);
+    if (activeList === projectList && activeProjectIndex === 0) {
       startInterval();
     } else {
       clearInterval(interval);
     }
-    updateColors(projectList);
+    updateColors(activeList);
     setTimeout(() => {
       toggleImageTransition("0s");
       listeningToWheel = true;
@@ -175,35 +154,37 @@ function listenEvent(event) {
   } else if (
     yPos < -130 &&
     listeningToWheel &&
-    activeProjectIndex < projectList.length - 1
+    activeProjectIndex < activeList.length - 1
   ) {
-    toggleImageTransition(".1s");
     listeningToWheel = false;
+    toggleImageTransition(".1s");
     activeProjectIndex++;
-    updateImages(projectList);
-    populateDescription(projectList);
-    if (activeProjectIndex === 0) {
+    updateImages(activeList);
+    populateDescription(activeList);
+    if (activeList === projectList && activeProjectIndex === 0) {
       startInterval();
     } else {
       clearInterval(interval);
     }
-    updateColors(projectList);
+    updateColors(activeList);
     setTimeout(() => {
       toggleImageTransition("0s");
       listeningToWheel = true;
     }, 500);
   }
 }
+
 function handleTouchStart(event) {
   initialY = event.touches[0].clientY; // Store initial Y position
-  console.log(initialY);
+  // console.log(initialY);
 }
+
 function listenEventMobile(event) {
   console.log("hello");
   if (initialY !== null) {
     const currentY = event.touches[0].clientY;
     const yPos = currentY - initialY;
-    console.log(yPos);
+    // console.log(yPos);
     // Use deltaY for your scrolling logic here
     if (leftImage) {
       leftImage.style.transition = ".1s";
